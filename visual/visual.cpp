@@ -29,6 +29,55 @@
 using namespace std;
 
 // ==================== 在此处编写 Enemy和Target 类 ====================
+class Enemy
+{
+public:
+    int x,y;
+    char id;
+public:
+    void myset(int pos_x,int pos_y,char give_id){
+        x = pos_x;y = pos_y;
+        id = give_id;
+    }
+    char returnid(){
+        return this->id;
+    }
+    int return_pos_x(char id){
+        return this->x;
+    }
+    int return_pos_y(char id){
+        return this->y;
+    }
+};
+
+class Target : public Enemy
+{
+public:
+    double distance[4] = {0.0};
+    Enemy enemys[4];
+    //Target(const Enemy& e1,const Enemy& e2,const Enemy& e3,const Enemy& e4):enemys{e1,e2,e3,e4}{}
+public:
+    double get_distance(int x,int y){
+        double val = sqrt(x*x + y*y);
+        return val;
+    }
+    void choose(double distance[]){
+        double min = fmin(distance[0],fmin(distance[1],fmin(distance[2],distance[3])));
+        int record = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            if (min == distance[i])
+            {   
+                record = i;
+                break;
+            }  
+        }
+        //enemy[i]是最近的
+        char tar = enemys[record].returnid();
+        cout << tar <<endl;
+        
+    }
+};
 
 
 
@@ -36,8 +85,7 @@ using namespace std;
 
 
 int main() {
-    Target target;
-
+    Enemy enemy[4];
     for (int i = 0; i < 4; i++) {
         double x, y;
         char id;
@@ -45,10 +93,14 @@ int main() {
         cin >> id >> x >> y;
 
         //在此处调用你的Enemy的设置函数，传入id,x,y
-        
+        enemy[i].myset(x,y,id);
     }
-
-    // 调用查找并输出最佳目标
-
+    Target tar;
+    for(int j = 0;j < 4;j++)
+    {
+        tar.enemys[j] =  enemy[j];
+        tar.distance[j] = tar.get_distance(tar.enemys[j].x,tar.enemys[j].y);
+    }
+    tar.choose(tar.distance);
     return 0;
 }
